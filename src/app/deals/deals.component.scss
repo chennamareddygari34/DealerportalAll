@@ -1,0 +1,35 @@
+.container {
+  .tabs {
+    ul {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      li {
+        padding: 10px 20px;
+        cursor: pointer;
+        &.active {
+          border-bottom: 2px solid #007bff;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .tab-content {
+    padding: 20px;
+  }
+
+  .search-and-date-container {
+    display: flex;
+    align-items: center;
+
+    .separator {
+      width: 20px;
+    }
+
+    .mat-form-field {
+      margin-right: 15px;
+    }
+  }
+}
