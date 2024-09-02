@@ -1,0 +1,239 @@
+<div class="loan-application-container">
+  <div class="header-banner">
+    <h1>Loan Application</h1>
+    
+  </div>
+  <!-- <div class="button-container">
+    <button mat-raised-button color="accent" class="view-all-button">View All Applicants</button>
+    <a href="https://www.example.com" class="view-all-link">View All Applicants</a>
+  </div> -->
+  <div class="button-container">
+    <a  (click)="toggleApplicants()" class="view-all-link">{{ showApplicants ? 'Add Applicants' : 'View All Applicants' }}</a>
+  </div>
+  
+
+  <div *ngIf="showApplicants" class="applicants-grid-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- Define columns here -->
+      <ng-container matColumnDef="applicantName">
+        <th mat-header-cell *matHeaderCellDef> Applicant Name </th>
+        <td mat-cell *matCellDef="let applicant"> {{ applicant.applicant1 }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let applicant"> {{ applicant.email }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="occupationType">
+        <th mat-header-cell *matHeaderCellDef> Employment </th>
+        <td mat-cell *matCellDef="let applicant"> {{ applicant.occupationType }} </td>
+      </ng-container>
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef> Mobile </th>
+        <td mat-cell *matCellDef="let applicant"> {{ applicant.phone }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let applicant">
+          <button mat-icon-button color="primary" (click)="openEditApplicantDialog(applicant)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteApplicant(applicant)"  >
+            <mat-icon>delete</mat-icon>
+          </button>
+         
+        </td>
+      </ng-container>
+
+      <!-- Add more columns as needed  (click)="deleteApplicant(applicant.applicantId)" (click)="UpdateApplicant(applicant)"-->
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+  </div>
+  
+
+  <form (ngSubmit)="onSubmit(applicantForm)" #applicantForm="ngForm" class="form-container" *ngIf="!showApplicants">
+   
+    <div class="form-sections">
+      <mat-expansion-panel class="form-section">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Applicant Information</mat-panel-title>
+        </mat-expansion-panel-header>        
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>ApplicantName</mat-label>
+            <input matInput type="text" id="firstName" [(ngModel)]="applicant1" name="ApplicantName" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput type="date" id="dateOfBirth" [(ngModel)]="dateOfBirth" name="dateOfBirth" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Gender</mat-label>
+            <mat-select id="gender" [(ngModel)]="gender" name="gender" required>
+              <mat-option value="">Select</mat-option>
+              <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Marital Status</mat-label>
+            <mat-select id="maritalStatus" [(ngModel)]="maritalStatus" name="maritalStatus" required>
+              <mat-option value="">Select</mat-option>
+              <mat-option value="Single">Single</mat-option>
+              <mat-option value="Married">Married</mat-option>
+              <mat-option value="Divorced">Divorced</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Occupation Type</mat-label>
+            <input matInput type="text" id="occupationType" [(ngModel)]="occupationType" name="occupationType" required />
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="form-section">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Contact Information</mat-panel-title>
+        </mat-expansion-panel-header>        
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" id="email" [(ngModel)]="email" name="email" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Phone Number</mat-label>
+            <input matInput type="number" id="phoneNumber" [(ngModel)]="phone" name="phoneNumber" required />
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="form-section">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Address Details</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>House No</mat-label>
+            <input matInput type="text" id="houseNo" [(ngModel)]="houseNo" name="houseNo" required />
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>City</mat-label>
+            <input matInput type="text" id="city" [(ngModel)]="city" name="city" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>District</mat-label>
+            <input matInput type="text" id="district" [(ngModel)]="district" name="district" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>State</mat-label>
+            <input matInput type="text" id="state" [(ngModel)]="state" name="state" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Landmark</mat-label>
+            <input matInput type="text" id="landmark" [(ngModel)]="landmark" name="landmark" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Pincode</mat-label>
+            <input matInput type="number" id="pincode" [(ngModel)]="pincode" name="pincode" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Country</mat-label>
+            <input matInput type="text" id="country" [(ngModel)]="country" name="country" required />
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+    </div>
+
+    <mat-expansion-panel class="form-section">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Vendor Information</mat-panel-title>
+      </mat-expansion-panel-header>        
+      <div class="form-group">
+      
+        <mat-form-field appearance="fill">
+          <mat-label>Vendor</mat-label>
+          <mat-select [(ngModel)]="selectedVendorId" name="vendor">
+            <mat-option *ngFor="let vendor of vendors" [value]="vendor.vendorId">
+              {{ vendor.vendorName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="form-section">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Loan Information</mat-panel-title>
+      </mat-expansion-panel-header>        
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Loan Amount</mat-label>
+          <input matInput type="number" id="loanAmount" [(ngModel)]="loanAmount" name="loanAmount" required />
+        </mat-form-field>
+      </div>
+     
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Loan Term</mat-label>
+          <input matInput type="number" id="loanTerm" [(ngModel)]="loanTerm" name="loanTerm" required />
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Intrest Rate</mat-label>
+          <input matInput type="number" id="interestRate" [(ngModel)]="interestRate" name="intrest" required />
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Monthly Pay</mat-label>
+          <input matInput type="number" id="monthlyPayment" [(ngModel)]="monthlyPayment" name="monthlyPay" required />
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+    <div class="form-group save-button-container">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!applicantForm.valid" class="submit-button">Save</button>
+    </div>
+   
+  </form>
+</div>

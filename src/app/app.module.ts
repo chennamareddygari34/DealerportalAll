@@ -19,7 +19,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -33,6 +36,8 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { AdduserdialogComponent } from './adduserdialog/adduserdialog.component';
+import { ApplicantComponent } from './applicant/applicant.component';
+import { ApplicanteditComponent } from './applicantedit/applicantedit.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +47,9 @@ import { AdduserdialogComponent } from './adduserdialog/adduserdialog.component'
     DealsComponent,
     LoginComponent,
     ProfileComponent,
-    AdduserdialogComponent
+    AdduserdialogComponent,
+    ApplicantComponent,
+    ApplicanteditComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +75,11 @@ import { AdduserdialogComponent } from './adduserdialog/adduserdialog.component'
     MatDialogModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatExpansionModule,
+    MatPaginatorModule
 
   ],
   providers: [AuthGuard],

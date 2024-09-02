@@ -15,30 +15,35 @@ export class AppComponent {
   vendorName:any='';
   isLoggedIn: boolean = false;
 
-
+roleID:any;
  
   username = '';
  
  
   loginCredentials = { username: '', password: '' };
 
-
+  userRole:any;
 
   constructor(private router:Router,private appService:AppService){}
  
   ngOnInit(){
+  
     this.appService.currentVendorName.subscribe(
       name=>this.vendorName=name);
     
   }
   login() {
-   
+
     this.appService.login(this.loginCredentials).subscribe(
-      response => {
-        
+      (response:any) => {
+        console.log('res',response.roleId)
+        //this.roleID=response.roleId.toString();
          this.isLoggedIn = true;
          this.username = this.loginCredentials.username;
-        
+         sessionStorage.setItem('UserRole', response.roleId);
+         this.userRole = sessionStorage.getItem('UserRole');
+        // console.log('ss',  sessionStorage.setItem('UserRole',response.roleId))
+
       },
       error => {
         alert('Invalid credentials');

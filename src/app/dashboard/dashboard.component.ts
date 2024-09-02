@@ -1,4 +1,4 @@
-import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppService } from '../services/app.service';
 import { Router } from '@angular/router';
 
@@ -9,27 +9,23 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
   vendorId: string | null = null;
-  vendorIdForDate:any
+  vendorIdForDate: any;
   deals: any[] = [];
   selectedRange: string = 'monthToDate';
-  filteredStats: any;
-  applicationsSent:any=0;
-  contractsPending:any=0;
-  contractsFunded:any=0;
-  totalPaymentsToDealer:any=0;
+  applicationsSent: any = 0;
+  applicationsPending: any = 0;
+  applicationsApproved: any = 0;
+  contractsPending: any = 0;
+  contractsFunded: any = 0;
+  totalPaymentsToDealer: any = 0;
+  totalRecords: number = 0;
 
-  totalRecords: number = 0; // To store the total number of records
- 
-  
-  constructor(private appService:AppService,private cdr: ChangeDetectorRef,private router:Router) { }
+  constructor(private appService: AppService, private cdr: ChangeDetectorRef, private router: Router) { }
 
-  ngOnInit(): void 
-  {
-    debugger;
+  ngOnInit(): void {
     this.appService.currentVendorId.subscribe(vendorId => {
-      debugger;
       this.vendorId = vendorId;
-      this.vendorIdForDate=vendorId
+      this.vendorIdForDate = vendorId;
       if (vendorId) {
         this.fetchDeals(vendorId);
       } else {
@@ -37,114 +33,73 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-  onRangeChange(checked:any): void {
- if(checked ==='monthToDate'){
-this.selectedRange='monthToDate';
- }
- else if(checked==='last30Days'){
-  this.selectedRange='last30Days';
- }
-     //this.selectedRange = checked ?'monthToDate': 'last30Days' ;
-    
+
+  onRangeChange(checked: any): void {
+    this.selectedRange = checked === 'monthToDate' ? 'monthToDate' : 'last30Days';
     this.fetchDeals(this.vendorIdForDate);
   }
- 
+
   fetchDeals(vendorId: string) {
- 
-
-
     const now = new Date();
     let startDate: Date;
-    let startDate1: Date;
     let endDate: Date = new Date();
-    this.applicationsSent=null;
-    this.contractsPending=null;
-    this.contractsFunded=null;
-    this.totalPaymentsToDealer=null;
+    let startDate1: Date;
+
+    this.resetCounts();
     this.cdr.detectChanges();
 
     this.appService.getDeals(vendorId).subscribe(
-      
       data => {
-        debugger;
-        console.log('data', data);
         this.deals = data;
         this.totalRecords = data.length;
-        this.appService.changeVendorName(this.deals[0].vendorName)
-      
-        console.log('this.deals', data);
-        this.applicationsSent=0;
+        this.appService.changeVendorName(this.deals[0]?.vendorName || '');
+
         if (this.selectedRange === 'monthToDate') {
-        
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1); 
-
-          this.applicationsSent = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate && dealDate <= endDate && deal.status ==='Approved';
-          }).length;// Start of the current month
-
-          this.contractsPending = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate && dealDate <= endDate && deal.status ==='Pending';
-          }).length;// Start of the current month
-
-          this.contractsFunded = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate && dealDate <= endDate && deal.status ==='CreditFunded';
-          }).length;// Start of the current month
-
-          this.totalPaymentsToDealer = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate && dealDate <= endDate && deal.status ==='TotallyCredited';
-          }).length;// Start of the current month
-
-
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of the current month
         } else if (this.selectedRange === 'last30Days') {
-        
           startDate1 = new Date();
           startDate1.setDate(now.getDate() - 30); // Last 30 days
-
-         // startDate = new Date(now.getFullYear(), now.getMonth(), 1); 
-
-          this.applicationsSent = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate1 && dealDate <= endDate && deal.status ==='Approved';
-          }).length;// Start of the current month
-
-          this.contractsPending = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate1 && dealDate <= endDate && deal.status ==='Pending';
-          }).length;// Start of the current month
-
-          this.contractsFunded = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate1 && dealDate <= endDate && deal.status ==='CreditFunded';
-          }).length;// Start of the current month
-
-          this.totalPaymentsToDealer = this.deals.filter(deal => {
-            const dealDate = new Date(deal.applicantDate);
-            return dealDate >= startDate1 && dealDate <= endDate && deal.status ==='TotallyCredited';
-          }).length;// Start of the current month
         }
-        
-       
-       
-        this.cdr.detectChanges();
 
+        const startDateToUse = this.selectedRange === 'monthToDate' ? startDate : startDate1;
+
+        this.applicationsSent = this.filterDeals(startDateToUse, endDate, 'Application Sent');
+        this.applicationsPending = this.filterDeals(startDateToUse, endDate, 'Application Pending');
+        this.applicationsApproved = this.filterDeals(startDateToUse, endDate, 'Application Approved');
+        this.contractsPending = this.filterDeals(startDateToUse, endDate, 'Contract Pending');
+        this.contractsFunded = this.filterDeals(startDateToUse, endDate, 'CreditFunded');
+        this.totalPaymentsToDealer = this.filterDeals(startDateToUse, endDate, 'TotallyCredited');
+
+        this.cdr.detectChanges();
       },
       error => {
         console.error('Error fetching deals', error);
       }
     );
   }
+
+  filterDeals(startDate: Date, endDate: Date, status: string): number {
+    return this.deals.filter(deal => {
+      const dealDate = new Date(deal.applicantDate);
+      return dealDate >= startDate && dealDate <= endDate && deal.status.trim() === status;
+    }).length;
+  }
+
+  resetCounts() {
+    this.applicationsSent = 0;
+    this.applicationsPending = 0;
+    this.applicationsApproved = 0;
+    this.contractsPending = 0;
+    this.contractsFunded = 0;
+    this.totalPaymentsToDealer = 0;
+  }
+
   loadDealsLazy(event: any) {
     const { first, rows } = event;
     if (this.vendorId) {
-      // Fetch data for the specific page
       this.appService.getDeals(this.vendorId).subscribe(
         data => {
           this.deals = data.slice(first, first + rows);
-          //this.totalRecords = data.length; 
         },
         error => {
           console.error('Error fetching deals', error);
@@ -152,25 +107,12 @@ this.selectedRange='monthToDate';
       );
     }
   }
-  getAllApplications()
-  {
-    debugger;
-    this.router.navigate(['/deals']);
-    // this.appService.getAllDeals().subscribe(
-      
-    //   data => {
-    //     debugger;
-    //     console.log('data', data);
-    //     this.deals = data;
-    //     this.totalRecords = data.length;
-    //     this.appService.changeVendorName('0')
-    //     //this.deals = Array.isArray(data) ? data : [];
-    //     console.log('this.deals', data);
-    //   },
-    //   error => {
-    //     console.error('Error fetching deals', error);
-    //   }
-    // );
 
+  navigateToApplicantCreation() {
+    this.router.navigate(['/applicant']);
+  }
+  
+  getAllApplications() {
+    this.router.navigate(['/deals']);
   }
 }
