@@ -135,4 +135,3 @@ getApplicantsByStatus(status: string): Observable<any[]> {
 
 }
   
-

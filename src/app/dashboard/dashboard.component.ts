@@ -9,15 +9,15 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
   vendorId: string | null = null;
-  vendorIdForDate: any;
+  vendorName: string = '';
   deals: any[] = [];
   selectedRange: string = 'monthToDate';
-  applicationsSent: any = 0;
-  applicationsPending: any = 0;
-  applicationsApproved: any = 0;
-  contractsPending: any = 0;
-  contractsFunded: any = 0;
-  totalPaymentsToDealer: any = 0;
+  applicationsSent: number = 0;
+  applicationsPending: number = 0;
+  applicationsApproved: number = 0;
+  contractsPending: number = 0;
+  contractsFunded: number = 0;
+  totalPaymentsToDealer: number = 0;
   totalRecords: number = 0;
 
   constructor(private appService: AppService, private cdr: ChangeDetectorRef, private router: Router) { }
@@ -25,7 +25,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.appService.currentVendorId.subscribe(vendorId => {
       this.vendorId = vendorId;
-      this.vendorIdForDate = vendorId;
       if (vendorId) {
         this.fetchDeals(vendorId);
       } else {
@@ -34,9 +33,9 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  onRangeChange(checked: any): void {
-    this.selectedRange = checked === 'monthToDate' ? 'monthToDate' : 'last30Days';
-    this.fetchDeals(this.vendorIdForDate);
+  onRangeChange(checked: string): void {
+    this.selectedRange = checked;
+    this.fetchDeals(this.vendorId || '');
   }
 
   fetchDeals(vendorId: string) {
@@ -52,13 +51,14 @@ export class DashboardComponent implements OnInit {
       data => {
         this.deals = data;
         this.totalRecords = data.length;
-        this.appService.changeVendorName(this.deals[0]?.vendorName || '');
+        this.vendorName = this.deals[0]?.vendorName || '';
+        this.appService.changeVendorName(this.vendorName);
 
         if (this.selectedRange === 'monthToDate') {
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of the current month
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         } else if (this.selectedRange === 'last30Days') {
           startDate1 = new Date();
-          startDate1.setDate(now.getDate() - 30); // Last 30 days
+          startDate1.setDate(now.getDate() - 30);
         }
 
         const startDateToUse = this.selectedRange === 'monthToDate' ? startDate : startDate1;
@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateToApplicantCreation() {
-    this.router.navigate(['/applicant']);
+    this.router.navigate(['/applicant'], { queryParams: { vendorId: this.vendorId, vendorName: this.vendorName } });
   }
   
   getAllApplications() {

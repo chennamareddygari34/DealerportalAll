@@ -1,36 +1,30 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
-
 import { MatTableDataSource } from '@angular/material/table';
 import { AppService } from '../services/app.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { ApplicanteditComponent } from '../applicantedit/applicantedit.component';
 import { MatDialog } from '@angular/material/dialog';
-
-
-
-
-
+import { ActivatedRoute } from '@angular/router';
 
 export interface Applicant {
-  applicantId: number,
-    vendorId: number,
-    applicant1: string,
-    email: string,
-    phone:number,
-    dateOfBirth: Date,
-    gender: string,
-    maritalStatus: string,
-    occupationType: string,
-    houseNo: string,
-    city: string,
-    district: string,
-    state: string,
-    landmark: string,
-    pincode: number,
-    country: string
-   
+  applicantId: number;
+  vendorId: number;
+  applicant1: string;
+  email: string;
+  phone: number;
+  dateOfBirth: Date;
+  gender: string;
+  maritalStatus: string;
+  occupationType: string;
+  houseNo: string;
+  city: string;
+  district: string;
+  state: string;
+  landmark: string;
+  pincode: number;
+  country: string;
 }
 
 @Component({
@@ -40,15 +34,12 @@ export interface Applicant {
 })
 export class ApplicantComponent implements OnInit {
 
-
-
-
   showApplicants: boolean = false;
 
   applicants: Applicant[] = [];
-  applicantId:number=0
+  applicantId: number = 0;
   applicant1: string = '';
-  dateOfBirth: string='' ;
+  dateOfBirth: string = '';
   gender: string = '';
   maritalStatus: string = '';
   occupationType: string = '';
@@ -61,32 +52,37 @@ export class ApplicantComponent implements OnInit {
   landmark: string = '';
   pincode: string = '';
   country: string = '';
-  loanAmount:string='';
-  loanTerm:string='';
-  interestRate:string='';
-  monthlyPayment:string='';
+  loanAmount: string = '';
+  loanTerm: string = '';
+  interestRate: string = '';
+  monthlyPayment: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new MatTableDataSource<Applicant>(this.applicants);
+  displayedColumns: string[] = ['applicantName', 'email', 'occupationType', 'phone', 'actions'];
 
-  
-  // applicants: MatTableDataSource<any> = new MatTableDataSource([]);
- 
- 
-  displayedColumns: string[] = ['applicantName', 'email','occupationType','phone','actions'];
+  vendors: any[] = [];
+  selectedVendorId: number | null = null;
+  vendorName: string = '';
 
-  vendors: any[] = []; 
-  selectedVendorId: string | null = null;
-
-  constructor(private fb: FormBuilder,private appService:AppService,private snackBar: MatSnackBar,private dialog: MatDialog) {}
+  constructor(
+    private fb: FormBuilder,
+    private appService: AppService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.loadVendors();
+    this.route.queryParams.subscribe(params => {
+      this.selectedVendorId = params['vendorId'] || null;
+      this.vendorName = params['vendorName'] || '';
+    });
   }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
-
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
@@ -103,20 +99,18 @@ export class ApplicantComponent implements OnInit {
         district: this.district,
         state: this.state,
         landmark: this.landmark,
-        pincode: this.pincode.toString(),
+        pincode: this.pincode,
         country: this.country,
-        applicantId:this.applicantId,
-        vendorId:this.selectedVendorId,
-        loanAmount:this.loanAmount.toString(),
-        loanTerm:this.loanTerm.toString(),
-        interestRate:this.interestRate.toString(),
-        monthlyPayment:this.monthlyPayment.toString()
-
+        applicantId: this.applicantId,
+        vendorId: this.selectedVendorId || 0,  // use default value if null
+        loanAmount: this.loanAmount,
+        loanTerm: this.loanTerm,
+        interestRate: this.interestRate,
+        monthlyPayment: this.monthlyPayment
       };
-debugger;
+
       this.appService.addApplicant(newApplicant).subscribe(
         (response) => {
-          debugger;
           this.snackBar.open('Applicant added successfully!', 'Close', {
             duration: 3000
           });
@@ -131,22 +125,11 @@ debugger;
       );
     }
   }
-  loadVendors(): void {
-    this.appService.getVendors().subscribe(
-      (data) => {
-        console.log('vendor',data)
-        this.vendors = data;
-      },
-      (error) => {
-        console.error('Error fetching vendors', error);
-      }
-    );
-  }
-  
+
   toggleApplicants(): void {
     this.showApplicants = !this.showApplicants;
     if (this.showApplicants) {
-       this.loadApplicants(); 
+      this.loadApplicants();
     }
   }
 
@@ -154,56 +137,44 @@ debugger;
     this.appService.getAllApplicants().subscribe(
       (data) => {
         this.applicants = data;
-        this.dataSource.data = this.applicants; 
-        this.dataSource.paginator = this.paginator; 
+        this.dataSource.data = this.applicants;
+        this.dataSource.paginator = this.paginator;
       },
       (error) => {
         console.error('Error fetching applicants', error);
       }
     );
   }
+
   deleteApplicant(applicant: any) {
-    console.log('appDelete',applicant)
-    if (confirm(`Are you sure you want to delete ${applicant.applicant1} ?`)) {
-      debugger
-      
+    if (confirm(`Are you sure you want to delete ${applicant.applicant1}?`)) {
       this.appService.deleteApplicant(applicant.applicantId).subscribe(() => {
-        this.loadApplicants(); 
+        this.loadApplicants();
       });
     }
   }
-  openEditApplicantDialog(app:Applicant): void {
-    console.log('app',app)
+
+  openEditApplicantDialog(app: Applicant): void {
     const dialogRef = this.dialog.open(ApplicanteditComponent, {
       width: '400px',
-      data: app 
+      data: app
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      debugger
       if (result) {
-        debugger
-        console.log('resss',result)
-       this.UpdateApplicant(result.applicantId,result);
-      
+        this.UpdateApplicant(result.applicantId, result);
       }
     });
   }
-  UpdateApplicant(appId:any,user: any): void {
-    debugger
-    
-    this.appService.updateApplicant(appId,user).subscribe(
+
+  UpdateApplicant(appId: number, user: any): void {
+    this.appService.updateApplicant(appId, user).subscribe(
       (response) => {
-        debugger
-        console.log('res',response)
-       // this.applicants.push(response);
         this.loadApplicants();
-        
       },
       (error) => {
         console.error('Error Editing applicant', error);
       }
     );
-
-}
+  }
 }

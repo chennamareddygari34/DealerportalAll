@@ -65,6 +65,7 @@ roleID:any;
 
   updateVendorId() {
     this.appService.changeVendorId(this.vendorId);
+   
   }
   switchVendor() {
     this.appService.setVendorId(this.vendorId);

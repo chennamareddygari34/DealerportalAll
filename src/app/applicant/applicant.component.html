@@ -181,25 +181,21 @@
         </div>
       </mat-expansion-panel>
     </div>
-
+   
     <mat-expansion-panel class="form-section">
       <mat-expansion-panel-header>
         <mat-panel-title>Vendor Information</mat-panel-title>
-      </mat-expansion-panel-header>        
+      </mat-expansion-panel-header>   
       <div class="form-group">
-      
         <mat-form-field appearance="fill">
-          <mat-label>Vendor</mat-label>
-          <mat-select [(ngModel)]="selectedVendorId" name="vendor">
-            <mat-option *ngFor="let vendor of vendors" [value]="vendor.vendorId">
-              {{ vendor.vendorName }}
-            </mat-option>
-          </mat-select>
+          <mat-label>Vendor Name</mat-label>
+          <input matInput [(ngModel)]="vendorName" name="vendorName" required />
         </mat-form-field>
       </div>
-
     </mat-expansion-panel>
-
+    
+    
+    
     <mat-expansion-panel class="form-section">
       <mat-expansion-panel-header>
         <mat-panel-title>Loan Information</mat-panel-title>
