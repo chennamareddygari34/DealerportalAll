@@ -14,24 +14,54 @@ export interface User {
   roleId: number;
   role: string; 
 } 
-export interface Applicant {
-  applicantId: number,
-    vendorId: number,
-    applicant1: string,
-    email: string,
-    phone:number,
-    dateOfBirth: Date,
-    gender: string,
-    maritalStatus: string,
-    occupationType: string,
-    houseNo: string,
-    city: string,
-    district: string,
-    state: string,
-    landmark: string,
-    pincode: number,
-    country: string
+// export interface Applicant {
+//   applicantId: number,
+//     vendorId: number,
+//     applicant1: string,
+//     email: string,
+//     phone:number,
+//     dateOfBirth: Date,
+//     gender: string,
+//     maritalStatus: string,
+//     occupationType: string,
+//     houseNo: string,
+//     city: string,
+//     district: string,
+//     state: string,
+//     landmark: string,
+//     pincode: number,
+//     country: string
    
+// }
+// src/app/models/applicant.model.ts
+
+export interface Applicant {
+  applicantId: number;
+  vendorId: number;
+  applicant1: string;
+  email: string;
+  phone: number;
+  dateOfBirth: Date;
+  gender: string;
+  maritalStatus: string;
+  occupationType: string;
+  houseNo: string;
+  city: string;
+  district: string;
+  state: string;
+  landmark: string;
+  pincode: number;
+  country: string;
+  loanAmount: number;
+  loanTerm: number;
+  interestRate: number;
+  monthlyPayment: number;
+  applicantDate: Date;
+  status: string;
+  lastUpdate: Date;
+  loanType: string;
+  loanDescription: string;
+  maxLoanAmount: number;
 }
 
 @Injectable({
@@ -40,6 +70,9 @@ export interface Applicant {
 
 
 export class AppService {
+  getApplicantsByVendorIdToShowAll(arg0: number) {
+    throw new Error('Method not implemented.');
+  }
   private vendorIdSource = new BehaviorSubject<string | null>(null);
   currentVendorId = this.vendorIdSource.asObservable();
 
@@ -64,6 +97,13 @@ export class AppService {
   login(user:any){
     return this.http.post(`${environment.apiUrlLogin}`, user);
   } 
+  clearUserData() {
+    // Clear any relevant data
+    this.VendorNameSource.next(null);
+    this.vendorIdSource.next(null);
+    sessionStorage.clear();
+    localStorage.clear();
+  }
 
   getDeals(vendorId: string): Observable<any[]> {
     
@@ -130,7 +170,9 @@ getApplicantsByStatus(status: string): Observable<any[]> {
   const apiUrl = `${this.baseUrl}/${encodedStatus}`;
   return this.http.get<any[]>(apiUrl);
 }
-
+getApplicantsByVendorIdToViewAllApplicantDetails(vendorId: any): Observable<Applicant[]> {
+  return this.http.get<Applicant[]>(`${environment.apiUrlforgettingviewallapplicants}/${vendorId}`);
+}
 
 
 }

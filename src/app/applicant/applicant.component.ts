@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { ApplicanteditComponent } from '../applicantedit/applicantedit.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 
 export interface Applicant {
   applicantId: number;
@@ -25,6 +26,16 @@ export interface Applicant {
   landmark: string;
   pincode: number;
   country: string;
+  loanAmount: number;
+  loanTerm: number;
+  interestRate: number;
+  monthlyPayment: number;
+  applicantDate: Date;
+  status: string;
+  lastUpdate: Date;
+  loanType: string;
+  loanDescription: string;
+  maxLoanAmount: number;
 }
 
 @Component({
@@ -35,7 +46,6 @@ export interface Applicant {
 export class ApplicantComponent implements OnInit {
 
   showApplicants: boolean = false;
-
   applicants: Applicant[] = [];
   applicantId: number = 0;
   applicant1: string = '';
@@ -52,15 +62,22 @@ export class ApplicantComponent implements OnInit {
   landmark: string = '';
   pincode: string = '';
   country: string = '';
-  loanAmount: string = '';
-  loanTerm: string = '';
-  interestRate: string = '';
-  monthlyPayment: string = '';
+  loanAmount: number = 0;
+  loanTerm: number = 0;
+  interestRate: number = 0;
+  monthlyPayment: number = 0;
+  applicantDate: string = '';
+  status: string = 'Application Sent';
+  lastUpdate: string = '';
+  loanType: string = 'Vehicle Loan';
+  loanDescription: string = 'Loan Application for Vehicles';
+  maxLoanAmount: number = 2000000;
+  loanTerms: number[] = [6, 12, 18, 24, 26, 64];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new MatTableDataSource<Applicant>(this.applicants);
   displayedColumns: string[] = ['applicantName', 'email', 'occupationType', 'phone', 'actions'];
-
+ 
   vendors: any[] = [];
   selectedVendorId: number | null = null;
   vendorName: string = '';
@@ -87,6 +104,7 @@ export class ApplicantComponent implements OnInit {
   onSubmit(form: NgForm): void {
     if (form.valid) {
       const newApplicant = {
+        applicantId: this.applicantId,
         applicant1: this.applicant1,
         dateOfBirth: this.dateOfBirth,
         gender: this.gender,
@@ -101,22 +119,27 @@ export class ApplicantComponent implements OnInit {
         landmark: this.landmark,
         pincode: this.pincode,
         country: this.country,
-        applicantId: this.applicantId,
-        vendorId: this.selectedVendorId || 0,  // use default value if null
+        vendorId: this.selectedVendorId || 0,  
         loanAmount: this.loanAmount,
         loanTerm: this.loanTerm,
         interestRate: this.interestRate,
-        monthlyPayment: this.monthlyPayment
+        monthlyPayment: this.monthlyPayment,
+        applicantDate: this.applicantDate,
+        status: this.status,
+        lastUpdate: this.lastUpdate,
+        loanType: this.loanType,
+        loanDescription: this.loanDescription,
+        maxLoanAmount: this.maxLoanAmount
       };
 
       this.appService.addApplicant(newApplicant).subscribe(
-        (response) => {
+        (response: any) => {
           this.snackBar.open('Applicant added successfully!', 'Close', {
             duration: 3000
           });
           form.resetForm();
         },
-        (error) => {
+        (error: any) => {
           this.snackBar.open('Failed to add applicant. Please try again.', 'Close', {
             duration: 3000
           });
@@ -132,32 +155,28 @@ export class ApplicantComponent implements OnInit {
       this.loadApplicants();
     }
   }
-
   loadApplicants(): void {
-    this.appService.getAllApplicants().subscribe(
-      (data) => {
-        this.applicants = data;
-        this.dataSource.data = this.applicants;
+    this.appService.getApplicantsByVendorIdToViewAllApplicantDetails(this.selectedVendorId || 0).subscribe(
+      (response: Applicant[]) => {
+        this.applicants = response;
+        this.dataSource.data = this.applicants; 
         this.dataSource.paginator = this.paginator;
+        
       },
-      (error) => {
-        console.error('Error fetching applicants', error);
+      (error: any) => {
+        console.error('Error loading applicants:', error);
+        this.snackBar.open('Failed to load applicants. Please try again.', 'Close', {
+          duration: 3000
+        });
       }
     );
   }
-
-  deleteApplicant(applicant: any) {
-    if (confirm(`Are you sure you want to delete ${applicant.applicant1}?`)) {
-      this.appService.deleteApplicant(applicant.applicantId).subscribe(() => {
-        this.loadApplicants();
-      });
-    }
-  }
+  
 
   openEditApplicantDialog(app: Applicant): void {
     const dialogRef = this.dialog.open(ApplicanteditComponent, {
       width: '400px',
-      data: app
+      data: { ...app, vendorName: this.vendorName }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -167,7 +186,7 @@ export class ApplicantComponent implements OnInit {
     });
   }
 
-  UpdateApplicant(appId: number, user: any): void {
+  UpdateApplicant(appId: number, user: Applicant): void {
     this.appService.updateApplicant(appId, user).subscribe(
       (response) => {
         this.loadApplicants();
@@ -177,4 +196,39 @@ export class ApplicantComponent implements OnInit {
       }
     );
   }
+
+
+  deleteApplicant(applicant: Applicant): void {
+    if (confirm('Are you sure you want to delete this applicant?')) {
+      this.appService.deleteApplicant(applicant.applicantId).subscribe(
+        () => {
+          this.snackBar.open('Applicant deleted successfully!', 'Close', {
+            duration: 3000
+          });
+          this.loadApplicants(); 
+        },
+        (error: any) => {
+          this.snackBar.open('Failed to delete applicant. Please try again.', 'Close', {
+            duration: 3000
+          });
+          console.error('Error deleting applicant:', error);
+        }
+      );
+    }
+  }
+  getFormattedInterestRate(interestRate: number): string {
+    return `${interestRate}%`;
+  }
+  calculateMonthlyPayment(): void {
+    const P = this.loanAmount; // Principal
+    const r = this.interestRate / 100 / 12; // Monthly interest rate
+    const n = this.loanTerm; // Number of payments
+  
+    if (r === 0) {
+      this.monthlyPayment = P / n;
+    } else {
+      this.monthlyPayment = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    }
+  }
+  
 }

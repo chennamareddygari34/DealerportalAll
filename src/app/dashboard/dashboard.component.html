@@ -31,7 +31,7 @@
         <button pButton type="button" label="View All Deals" (click)="getAllApplications()" class="button view-all-deals"></button>
       </div>
       <mat-card-content>
-        <p-table [value]="deals" [paginator]="true" [rows]="6" (onLazyLoad)="loadDealsLazy($event)" [totalRecords]="totalRecords" class="p-table">
+        <p-table [value]="deals" [paginator]="true" [rows]="4" (onLazyLoad)="loadDealsLazy($event)" [totalRecords]="totalRecords" class="p-table">
           <ng-template pTemplate="header">
             <tr>
               <th>App ID</th>
@@ -62,7 +62,6 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Conditionally show Create New Application button if vendorId is set -->
     <div class="button-row" *ngIf="vendorId">
       <button pButton type="button" label="Create New Application" (click)="navigateToApplicantCreation()" class="button create-new-applicant"></button>
     </div>

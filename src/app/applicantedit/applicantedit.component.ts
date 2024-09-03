@@ -1,3 +1,4 @@
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -27,7 +28,9 @@ export class ApplicanteditComponent implements OnInit {
     state: [data.state, Validators.required],
     landmark: [data.landmark, Validators.required],
     pincode: [data.pincode, Validators.required],
-    country: [data.country, Validators.required]
+    country: [data.country, Validators.required],
+    vendorName: [data.vendorName, Validators.required]  
+
   });}
 
   ngOnInit(): void {
@@ -38,6 +41,7 @@ export class ApplicanteditComponent implements OnInit {
 
   onSave(): void {
     if (this.editApplicantForm.valid) {
+      debugger
       const formData = { 
         ...(this.data || {}), 
         ...this.editApplicantForm.value 
