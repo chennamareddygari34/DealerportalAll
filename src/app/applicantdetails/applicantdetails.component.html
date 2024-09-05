@@ -1,0 +1,52 @@
+<div class="applicant-details-container">
+  <h2>Applicant Details</h2>
+  <mat-card *ngIf="applicant">
+    <mat-card-content>
+      <div class="section">
+        <div class="section-content">
+          <p class="section-title applicant-info-title"><strong>Applicant Information</strong></p>
+          <p><strong>Name:</strong> {{ applicant.applicant1 }}</p>
+          <p><strong>Date of Birth:</strong> {{ applicant.dateOfBirth | date }}</p>
+          <p><strong>Gender:</strong> {{ applicant.gender }}</p>
+          <p><strong>Marital Status:</strong> {{ applicant.maritalStatus }}</p>
+          <p><strong>Occupation Type:</strong> {{ applicant.occupationType }}</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="section">
+        <div class="section-content">
+          <p class="section-title contact-info-title"><strong>Contact Information</strong></p>
+          <p><strong>Email:</strong> {{ applicant.email }}</p>
+          <p><strong>Phone:</strong> {{ applicant.phone }}</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="section">
+        <div class="section-content">
+          <p class="section-title address-info-title"><strong>Address Information</strong></p>
+          <p><strong>House No:</strong> {{ applicant.houseNo }}</p>
+          <p><strong>City:</strong> {{ applicant.city }}</p>
+          <p><strong>District:</strong> {{ applicant.district }}</p>
+          <p><strong>State:</strong> {{ applicant.state }}</p>
+          <p><strong>Landmark:</strong> {{ applicant.landmark }}</p>
+          <p><strong>Pincode:</strong> {{ applicant.pincode }}</p>
+          <p><strong>Country:</strong> {{ applicant.country }}</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="section">
+        <div class="section-content">
+          <p class="section-title vendor-info-title"><strong>Vendor Information</strong></p>
+          <p><strong>Vendor Name:</strong> {{ vendorName }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <button mat-button (click)="goBack()">
+        Back
+      </button>
+    </mat-card-actions>
+    
+  </mat-card>
+</div>

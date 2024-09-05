@@ -62,9 +62,15 @@
       </mat-card-content>
     </mat-card>
 
-    <div class="button-row" *ngIf="vendorId">
+<div class="align-container align-right"> 
+  <div class="button-container" *ngIf="vendorId">
       <button pButton type="button" label="Create New Application" (click)="navigateToApplicantCreation()" class="button create-new-applicant"></button>
+      <button pButton type="button" label="Document Verification" (click)="navigateToDocumentVerification()" class="button document-verification"></button>
+      <button pButton type="button" label="CreditScore " (click)="navigateToCreditScore()" class="button creditscore-status"></button>
+      <button pButton type="button" label="Loan Status Verification" (click)="navigateToLoanStatus()" class="button loan-status"></button>
+
     </div>
-    
+  </div>
+
   </div>
 </div>

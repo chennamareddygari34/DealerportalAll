@@ -38,45 +38,98 @@ export class DashboardComponent implements OnInit {
     this.fetchDeals(this.vendorId || '');
   }
 
+  // fetchDeals(vendorId: string) {
+  //   const now = new Date();
+  //   let startDate: Date;
+  //   let endDate: Date = new Date();
+  //   let startDate1: Date;
+
+  //   this.resetCounts();
+  //   this.cdr.detectChanges();
+
+  //   this.appService.getDeals(vendorId).subscribe(
+  //     data => {
+  //       this.deals = data;
+  //       this.totalRecords = data.length;
+  //       this.vendorName = this.deals[0]?.vendorName || '';
+  //       this.appService.changeVendorName(this.vendorName);
+
+  //       if (this.selectedRange === 'monthToDate') {
+  //         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  //       } else if (this.selectedRange === 'last30Days') {
+  //         startDate1 = new Date();
+  //         startDate1.setDate(now.getDate() - 30);
+  //       }
+
+  //       const startDateToUse = this.selectedRange === 'monthToDate' ? startDate : startDate1;
+
+  //       this.applicationsSent = this.filterDeals(startDateToUse, endDate, 'Application Sent');
+  //       this.applicationsPending = this.filterDeals(startDateToUse, endDate, 'Application Pending');
+  //       this.applicationsApproved = this.filterDeals(startDateToUse, endDate, 'Application Approved');
+  //       this.contractsPending = this.filterDeals(startDateToUse, endDate, 'Contract Pending');
+  //       this.contractsFunded = this.filterDeals(startDateToUse, endDate, 'CreditFunded');
+  //       this.totalPaymentsToDealer = this.filterDeals(startDateToUse, endDate, 'TotallyCredited');
+
+  //       this.cdr.detectChanges();
+  //     },
+  //     error => {
+  //       console.error('Error fetching deals', error);
+  //     }
+  //   );
+  // }
   fetchDeals(vendorId: string) {
     const now = new Date();
     let startDate: Date;
     let endDate: Date = new Date();
     let startDate1: Date;
-
+  
     this.resetCounts();
     this.cdr.detectChanges();
-
+  
     this.appService.getDeals(vendorId).subscribe(
       data => {
-        this.deals = data;
-        this.totalRecords = data.length;
-        this.vendorName = this.deals[0]?.vendorName || '';
+        if (data && data.length > 0) {
+          this.deals = data;
+          this.totalRecords = data.length;
+          this.vendorName = this.deals[0]?.vendorName || '';
+        } else {
+          this.deals = [];
+          this.totalRecords = 0;
+          this.vendorName = ''; // Set to empty string or some default value if no data
+        }
         this.appService.changeVendorName(this.vendorName);
-
+  
         if (this.selectedRange === 'monthToDate') {
           startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         } else if (this.selectedRange === 'last30Days') {
           startDate1 = new Date();
           startDate1.setDate(now.getDate() - 30);
         }
-
+  
         const startDateToUse = this.selectedRange === 'monthToDate' ? startDate : startDate1;
-
+  
         this.applicationsSent = this.filterDeals(startDateToUse, endDate, 'Application Sent');
         this.applicationsPending = this.filterDeals(startDateToUse, endDate, 'Application Pending');
         this.applicationsApproved = this.filterDeals(startDateToUse, endDate, 'Application Approved');
         this.contractsPending = this.filterDeals(startDateToUse, endDate, 'Contract Pending');
         this.contractsFunded = this.filterDeals(startDateToUse, endDate, 'CreditFunded');
         this.totalPaymentsToDealer = this.filterDeals(startDateToUse, endDate, 'TotallyCredited');
-
+  
         this.cdr.detectChanges();
       },
       error => {
         console.error('Error fetching deals', error);
+        // Handle error gracefully
+        if (error.status === 404) {
+          this.deals = [];
+          this.totalRecords = 0;
+          this.vendorName = ''; // Ensure vendorName is updated even if no data is found
+          this.appService.changeVendorName(this.vendorName);
+        }
       }
     );
   }
+  
 
   filterDeals(startDate: Date, endDate: Date, status: string): number {
     return this.deals.filter(deal => {
@@ -111,7 +164,17 @@ export class DashboardComponent implements OnInit {
   navigateToApplicantCreation() {
     this.router.navigate(['/applicant'], { queryParams: { vendorId: this.vendorId, vendorName: this.vendorName } });
   }
-  
+  navigateToDocumentVerification() {
+    this.router.navigate(['/documentverification']);
+  }
+
+  navigateToLoanStatus() {
+    this.router.navigate(['/loanstatus']);
+  }
+
+  navigateToCreditScore() {
+    this.router.navigate(['/creditscore']);
+  }
   getAllApplications() {
     this.router.navigate(['/deals']);
   }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
+import { FormBuilder, NgForm } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppService } from '../services/app.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,7 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { ApplicanteditComponent } from '../applicantedit/applicantedit.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { ApplicantdetailsComponent } from '../applicantdetails/applicantdetails.component';
 
 export interface Applicant {
   applicantId: number;
@@ -46,6 +46,7 @@ export interface Applicant {
 export class ApplicantComponent implements OnInit {
 
   showApplicants: boolean = false;
+  selectedApplicant: any;
   applicants: Applicant[] = [];
   applicantId: number = 0;
   applicant1: string = '';
@@ -74,6 +75,7 @@ export class ApplicantComponent implements OnInit {
   maxLoanAmount: number = 2000000;
   loanTerms: number[] = [6, 12, 18, 24, 26, 64];
 
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new MatTableDataSource<Applicant>(this.applicants);
   displayedColumns: string[] = ['applicantName', 'email', 'occupationType', 'phone', 'actions'];
@@ -89,6 +91,7 @@ export class ApplicantComponent implements OnInit {
     private dialog: MatDialog,
     private route: ActivatedRoute
   ) { }
+  
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -133,6 +136,7 @@ export class ApplicantComponent implements OnInit {
       };
 
       this.appService.addApplicant(newApplicant).subscribe(
+        
         (response: any) => {
           this.snackBar.open('Applicant added successfully!', 'Close', {
             duration: 3000
@@ -155,6 +159,23 @@ export class ApplicantComponent implements OnInit {
       this.loadApplicants();
     }
   }
+
+  viewApplicantDetails(applicant: Applicant): void {
+    this.dialog.open(ApplicantdetailsComponent, {
+      width: '500px',
+      data: {
+        applicant: applicant,
+        vendorName: this.vendorName // Pass vendor name to the dialog
+      }
+    });
+  }
+
+  // viewApplicantDetails(applicant: any): void {
+  //   this.dialog.open(ApplicantdetailsComponent, {
+  //     width: '600px',
+  //     data: { applicant }
+  //   });
+  // }
   loadApplicants(): void {
     this.appService.getApplicantsByVendorIdToViewAllApplicantDetails(this.selectedVendorId || 0).subscribe(
       (response: Applicant[]) => {
@@ -171,7 +192,6 @@ export class ApplicantComponent implements OnInit {
       }
     );
   }
-  
 
   openEditApplicantDialog(app: Applicant): void {
     const dialogRef = this.dialog.open(ApplicanteditComponent, {

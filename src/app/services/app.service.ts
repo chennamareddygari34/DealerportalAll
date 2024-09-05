@@ -14,26 +14,6 @@ export interface User {
   roleId: number;
   role: string; 
 } 
-// export interface Applicant {
-//   applicantId: number,
-//     vendorId: number,
-//     applicant1: string,
-//     email: string,
-//     phone:number,
-//     dateOfBirth: Date,
-//     gender: string,
-//     maritalStatus: string,
-//     occupationType: string,
-//     houseNo: string,
-//     city: string,
-//     district: string,
-//     state: string,
-//     landmark: string,
-//     pincode: number,
-//     country: string
-   
-// }
-// src/app/models/applicant.model.ts
 
 export interface Applicant {
   applicantId: number;
@@ -94,6 +74,10 @@ export class AppService {
   changeVendorId(vendorId: string) {
     this.vendorIdSource.next(vendorId);
   }
+  checkVendorExists(vendorId: number): Observable<boolean> {
+    const url = `${environment.apiUrlcheckVendorExists}/${vendorId}`;
+    return this.http.get<boolean>(url);
+  }
   login(user:any){
     return this.http.post(`${environment.apiUrlLogin}`, user);
   } 
@@ -105,10 +89,7 @@ export class AppService {
     localStorage.clear();
   }
 
-  getDeals(vendorId: string): Observable<any[]> {
-    
-    return this.http.get<any[]>(`${environment.apiUrlforGet}/${vendorId}`);
-  }
+ 
   getVendorName(vendorId: string): Observable<string> {
     
     return this.http.get<any>(`${environment.apiUrlforGet}/${vendorId}`).pipe(
@@ -153,7 +134,7 @@ addApplicant(applicant: any): Observable<any> {
   console.log('data',applicant)
   return this.http.post<any>(`${environment.apiUrlAddApplicant}`, applicant);
 }
-getVendors(): Observable<any[]> {
+getVendors(vendorId: string): Observable<any[]> {
   return this.http.get<any[]>(`${environment.apiUrlGetAllVendor}`);
 }
 getAllApplicants(): Observable<Applicant[]>{
@@ -173,7 +154,14 @@ getApplicantsByStatus(status: string): Observable<any[]> {
 getApplicantsByVendorIdToViewAllApplicantDetails(vendorId: any): Observable<Applicant[]> {
   return this.http.get<Applicant[]>(`${environment.apiUrlforgettingviewallapplicants}/${vendorId}`);
 }
-
+// addApplicantByVendorId(vendorId: string, applicant: Applicant): Observable<any> {
+//   const url = `${environment.apiUrlToAddNewApplicantByUsingParticularVendorId}/AddApplicantByVendorId/${vendorId}`;
+//   return this.http.post<any>(url, applicant);
+// }
+getDeals(vendorId: string): Observable<any[]> {
+    
+  return this.http.get<any[]>(`${environment.apiUrlforGet}/${vendorId}`);
+}
 
 }
   

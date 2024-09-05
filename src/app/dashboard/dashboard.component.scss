@@ -32,38 +32,34 @@ mat-card-content {
     border-radius: 5px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 
-    &:hover {
-      background: #e0e0e0;
-    }
+  .stat:hover {
+    background: #e0e0e0;
   }
 
   .p-table {
     width: 100%;
     border-collapse: collapse;
+  }
 
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
 
-    th {
-      background-color: #f5f5f5;
-      font-weight: bold;
-    }
+  th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
 
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
 
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    th, td {
-      text-align: center; /* Ensure all text is centered */
-    }
+  tr:hover {
+    background-color: #f1f1f1;
   }
 }
 
@@ -74,33 +70,82 @@ mat-card-content {
 }
 
 .button.view-all-deals {
-  background-color: #007bff; /* Blue color */
+  background-color: #007bff;
   color: white;
   border: none;
+  width: 10%;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .button.view-all-deals:hover {
-  background-color: #b3007d; /* Darker blue color on hover */
+  background-color: #007bff;
 }
 
-.button.create-new-applicant {
-  background-color: #28a745; /* Green color */
+.align-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.align-container.align-right {
+  justify-content: flex-end;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  width: 250px;
+}
+
+.button {
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.button.create-new-applicant {
+  background-color: #b3007d;
 }
 
 .button.create-new-applicant:hover {
-  background-color: #218838; /* Darker green color on hover */
+  background-color: #218838;
 }
 
-.button-row {
-  display: flex;
-  justify-content: flex-end; /* Aligns the button to the right */
-  margin-top: 10px; /* Adds some space above the button row */
+.button.creditscore-status {
+  background-color: #006eb3;
+}
+
+.button.creditscore-status:hover {
+  background-color: #218838;
+}
+
+.button.document-verification {
+  background-color: #a74e28;
+}
+
+.button.document-verification:hover {
+  background-color: #218838;
+}
+
+.button.loan-status {
+  background-color: #1855ab;
+}
+
+.button.loan-status:hover {
+  background-color: #2b8821;
+}
+
+.button-container .button:last-child {
+  margin-bottom: 0;
 }

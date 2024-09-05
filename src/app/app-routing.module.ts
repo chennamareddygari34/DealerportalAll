@@ -8,6 +8,10 @@ import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { AdduserdialogComponent } from './adduserdialog/adduserdialog.component';
 import { ApplicantComponent } from './applicant/applicant.component';
+import { DocumentverificationComponent } from './documentverification/documentverification.component';
+import { LoanstatusComponent } from './loanstatus/loanstatus.component';
+import { CreditscoreComponent } from './creditscore/creditscore.component';
+import { ApplicantdetailsComponent } from './applicantdetails/applicantdetails.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -16,7 +20,12 @@ const routes: Routes = [
   { path: 'deals', component: DealsComponent },
   { path: 'profile', component: ProfileComponent },
   {path:'adduserdialog',component:AdduserdialogComponent},
-  {path:'applicant',component:ApplicantComponent}
+  {path:'applicant',component:ApplicantComponent},
+  { path: 'documentverification', component: DocumentverificationComponent },
+  { path: 'loanstatus', component: LoanstatusComponent },
+  {path:'creditscore',component:CreditscoreComponent},
+  {path:'applicantdetails',component:ApplicantdetailsComponent}
+
 ];
 
 

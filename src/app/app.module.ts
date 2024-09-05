@@ -23,6 +23,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider'; 
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -38,6 +39,10 @@ import { ProfileComponent } from './profile/profile.component';
 import { AdduserdialogComponent } from './adduserdialog/adduserdialog.component';
 import { ApplicantComponent } from './applicant/applicant.component';
 import { ApplicanteditComponent } from './applicantedit/applicantedit.component';
+import { DocumentverificationComponent } from './documentverification/documentverification.component';
+import { LoanstatusComponent } from './loanstatus/loanstatus.component';
+import { CreditscoreComponent } from './creditscore/creditscore.component';
+import { ApplicantdetailsComponent } from './applicantdetails/applicantdetails.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +54,11 @@ import { ApplicanteditComponent } from './applicantedit/applicantedit.component'
     ProfileComponent,
     AdduserdialogComponent,
     ApplicantComponent,
-    ApplicanteditComponent
+    ApplicanteditComponent,
+    DocumentverificationComponent,
+    LoanstatusComponent,
+    CreditscoreComponent,
+    ApplicantdetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -79,8 +88,8 @@ import { ApplicanteditComponent } from './applicantedit/applicantedit.component'
     MatSnackBarModule,
     MatTableModule,
     MatExpansionModule,
-    MatPaginatorModule
-
+    MatPaginatorModule,
+    MatDividerModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

@@ -37,13 +37,18 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let applicant">
+
+          <button mat-icon-button color="accent" (click)="viewApplicantDetails(applicant)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          
+
           <button mat-icon-button color="primary" (click)="openEditApplicantDialog(applicant)">
             <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button color="warn" (click)="deleteApplicant(applicant)"  >
             <mat-icon>delete</mat-icon>
-          </button>
-         
+          </button>        
         </td>
       </ng-container>
 
